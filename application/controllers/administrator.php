@@ -1,0 +1,45 @@
+<?php
+class Administrator extends CI_Controller{
+
+	function __construct(){
+		parent:: __construct();
+		$this->load->model('m_login');
+	}
+
+	function index(){
+		$this->load->view('admin/v_login');
+	}
+
+	function auth(){
+        $username=strip_tags(str_replace("'", "", $this->input->post('username')));
+        $password=strip_tags(str_replace("'", "", $this->input->post('password')));
+        $username=$username;
+        $password=$password;
+        $cekAdmin=$this->m_login->cekLogin($username,$password);
+        if($cekAdmin->num_rows > 0){
+	         $this->session->set_userdata('masuk',true);
+	         $this->session->set_userdata('user',$username);
+
+        }
+        
+        if($this->session->userdata('masuk') == true){
+            redirect('administrator/berhasilLogin');
+        }else{
+            redirect('administrator/gagalLogin');
+        }
+    }
+
+    function berhasilLogin(){
+        echo 'berhasil';
+    }
+    function gagalLogin(){
+        $url=base_url('administrator');
+        echo $this->session->set_flashdata('msg','<div class="alert alert-danger" role="alert"><button type="button" class="close" data-dismiss="alert"><span class="fa fa-close"></span></button> Username Atau Password Salah</div>');
+        redirect($url);
+    }
+    function logout(){
+        $this->session->sess_destroy();
+        $url=base_url('administrator');
+        redirect($url);
+    }
+}
